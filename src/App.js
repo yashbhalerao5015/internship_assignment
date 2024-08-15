@@ -30,19 +30,23 @@ export default function App() {
   }
 
   function handleUndo() {
-    if (undo.length === 0) return;
-    const oldNum = undo.pop();
-    setRedo([...redo, number]);
-    setNumber(oldNum);
-    setUndo(undo);
+    setUndo((prevUndo) => {
+      if (prevUndo.length === 0) return prevUndo;
+      const lastState = prevUndo[prevUndo.length - 1];
+      setRedo((prevRedo) => [...prevRedo, number]);
+      setNumber(lastState);
+      return prevUndo.slice(0, -1);
+    });
   }
 
   function handleRedo() {
-    if (redo.length === 0) return;
-    const newNum = redo.pop();
-    setUndo([...undo, number]);
-    setNumber(newNum);
-    setRedo(redo);
+    setRedo((prevRedo) => {
+      if (prevRedo.length === 0) return prevRedo;
+      const nextState = prevRedo[prevRedo.length - 1];
+      setUndo((prevUndo) => [...prevUndo, number]);
+      setNumber(nextState);
+      return prevRedo.slice(0, -1);
+    });
   }
 
   return (
